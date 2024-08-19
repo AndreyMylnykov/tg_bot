@@ -1,2 +1,16 @@
-# tg_bot
-Lets you create a Telegram bot from a chat with your friend
+
+# Project Title
+
+A brief description of what this project does and who it's for
+
+
+## Installation
+
+Install dependancies with pip
+
+```bash
+  pip install colorama
+  pip install sentence_transformers
+  pip install faiss
+```
+    
