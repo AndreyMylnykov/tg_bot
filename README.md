@@ -92,7 +92,3 @@ pip install colorama numpy sentence-transformers faiss python-telegram-bot
 - No JSON files found: Make sure you have exported a chat history from Telegram and placed the JSON file in the same directory as createBot.py.
 - Module not found errors: Ensure all required packages are installed correctly.
 - Bot not responding: Check that the bot token is correct and that the bot is properly added to the chat or group.
-
-# License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
