@@ -13,4 +13,11 @@ Install dependancies with pip
   pip install sentence_transformers
   pip install faiss
 ```
+
+## Usage
+
+1. Export .json file from a telegram chat without photos
+2. Put it into the same directory as createBot.py
+3. Run createBot.py, follow the instructions
+4. Run launchBot.py
     
