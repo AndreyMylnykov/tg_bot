@@ -1,7 +1,7 @@
 
-# Project Title
+# Telegram chat bot
 
-A brief description of what this project does and who it's for
+Lets you create and launch a telegram chat bot from a telegram chat with a friend.
 
 
 ## Installation
