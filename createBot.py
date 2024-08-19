@@ -110,8 +110,20 @@ try:
 
     print(Fore.GREEN + "Welcome to createBot.py!","\nThe goal of this script is to create a",Fore.CYAN + ".npy", "file and a",Fore.CYAN+".json","files that are required for the bot to work.\nFor this, the script requires a",Fore.CYAN + ".json","file which you can get from Telegram's",Fore.BLUE + '"Export chat history"', "option.\n")
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    success = False
+    name = ''
+    while not success:
+        name = input("\nChoose a name for the bot: ")
+        if name != '':
+            os.makedirs(name, exist_ok = True)
+            success = True
 
+               
+    with open(name + "/name.txt", 'w') as file:
+        file.write(name)
+    name += "/" 
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     json_files = glob.glob(os.path.join(script_dir, '*.json'))
 
     num_files = len(json_files)
@@ -142,9 +154,14 @@ try:
         data = json.load(f)
 
     message_array = process_chat(data)
-    saveChatArray(message_array)
+    saveChatArray(message_array, filename = name + 'processed_chat.json')
 
-    precompute_embeddings(extract_first_strings(message_array))
+    precompute_embeddings(extract_first_strings(message_array), filename = name + 'precomputed_embeddings.npy')
+
+    token = input("\n\nEnter the bot's token from BotFather"+grey_color+" (you can change it later in a file token.txt)"+Fore.WHITE+": ")
+    with open(name + "token.txt", 'w') as file:
+        file.write(token)
+
     print("\n\nDone! Now you have two files:", Fore.CYAN + json_filename, "and", Fore.CYAN + npm_filename, ". The bot is ready to use now. You can launch the bot with launchBot.py")
     input("\nPress ENTER...")
 

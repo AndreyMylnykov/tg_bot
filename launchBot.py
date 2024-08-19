@@ -7,33 +7,45 @@ grey_color = custom_color(80, 80, 80)
 green_color = custom_color(47, 201, 0)
 
 import os
+def get_number(to, text):
+    result = 0
+    success = False
+    while not success:
+        a = input(text)
+        try:
+            result = int(a)
+            if result >= 0 and result <= to:
+                success = True
+            else:
+                print(Fore.RED + f"Please enter a value between 0 and {to}.")
+        except:
+            print(Fore.RED + f"Please enter a valid number between 0 and {to}..")
+    return result
 
+script_directory = os.path.dirname(os.path.abspath(__file__))
+
+bot_folders = [
+    name for name in os.listdir(script_directory)
+    if os.path.isdir(os.path.join(script_directory, name)) and
+    os.path.isfile(os.path.join(script_directory, name, 'name.txt'))
+]
+
+
+number = 0
 print(Fore.GREEN + "Welcome to launchBot.py!", "\nThis program launches a Telegram bot based on the chat history. For this bot to work, you'll need 3 things:\n1. processed_chat.json\n2. precomputed_embeddings.npy\n3. Bot token\n\nTo get the first two, you'll need to first launch the createBot.py script. For the third, just google it.\n")
-
-filesExist = 0
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-filename = "processed_chat.json"
-file_path = os.path.join(script_dir, filename)
-
-if os.path.isfile(file_path):
-    print(green_color + f"File '{filename}' exists in the script directory.")
-    filesExist += 1
-else:
-    print(Fore.RED + f"File '{filename}' does not exist in the script directory.")
-
-filename = "precomputed_embeddings.npy"
-file_path = os.path.join(script_dir, filename)
-
-if os.path.isfile(file_path):
-    print(green_color + f"File '{filename}' exists in the script directory.")
-    filesExist += 1
-else:
-    print(Fore.RED + f"File '{filename}' does not exist in the script directory.")
-
-if filesExist != 2:
-    input("You don't have enough files for the bot to work.\nPress ENTER...")
+if len(bot_folders) == 0:
+    input("There are no bot folders in the script's directory. Please visit createBot.py...")
     exit()
+elif len(bot_folders) == 1:
+    input("Press ENTER to launch: "+ Fore.CYAN + bot_folders[0])
+else:
+    print("Choose which bot to launch:")
+    for number, name in enumerate(bot_folders):
+        print(" ", str(number),"-",Fore.CYAN + name)
+    number = get_number(len(bot_folders)-1, "\nEnter the corresponding number: ")
+
+print(bot_folders[number])
+
 
 print(Fore.CYAN + "Initializing modules...")
 start_time = time.time()
@@ -69,7 +81,7 @@ def precompute_embeddings(array_of_phrases, batch_size=1000, filename='precomput
     np.save(filename, phrase_vectors)  # Save embeddings for later use
     return phrase_vectors
 
-def load_embeddings(filename='precomputed_embeddings.npy'):
+def load_embeddings(filename):
     return np.load(filename)
 
 
@@ -101,11 +113,11 @@ def get_answer(text, embeddings, message_array):
     return his_message
 
 
-loaded_message_array = load_chat_array('processed_chat.json')
+loaded_message_array = load_chat_array(bot_folders[number]+"/"+'processed_chat.json')
 inputs = extract_first_strings(loaded_message_array)
 
 #embeddings = precompute_embeddings(inputs)
-embeddings = load_embeddings()
+embeddings = load_embeddings(bot_folders[number]+"/"+'precomputed_embeddings.npy')
 
 
 '''
@@ -119,9 +131,11 @@ def get_response(input_text):
     return get_answer(input_text, embeddings, loaded_message_array)
 
 def start(update, context):
+    global name
     update.message.reply_text("Hello, I'm "+name+". Ask me anything!")
 
 def handle_message(update, context):
+    global name
     user_input = update.message.text
 
     chat_type = update.message.chat.type  # Get the type of chat
@@ -132,7 +146,7 @@ def handle_message(update, context):
         answering = True
     elif chat_type == 'group' or chat_type == 'supergroup':
         chance = 0.2
-        if random.random() < chance or name in user_input.lower():
+        if random.random() < chance or name.lower() in user_input.lower():
             answering = True
             #user_input = re.sub(r'свят', '', user_input, flags=re.IGNORECASE)
             #print(user_input)
@@ -151,7 +165,8 @@ def handle_message(update, context):
 
 name = ''
 def main():
-    filename = "token.txt"
+    global name
+    filename = bot_folders[number]+ "/token.txt"
     TOKEN = ''
 
     if os.path.isfile(filename):
@@ -165,7 +180,7 @@ def main():
             file.write(TOKEN)
         print(f"Token saved to {filename}")
 
-    filename = "name.txt"
+    filename =bot_folders[number]+ "/name.txt"
 
     if os.path.isfile(filename):
         with open(filename, 'r') as file:
@@ -177,14 +192,10 @@ def main():
             file.write(name)
         print(f"Name saved to {filename}")
 
-
-    # Create an Updater object using your bot's token
     updater = Updater(TOKEN, use_context=True)
 
-    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # Add handlers for different commands and messages
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
     print("The bot is running.")
