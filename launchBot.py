@@ -135,64 +135,79 @@ def start(update, context):
 # Handler for incoming messages
 def handle_message(update, context):
     global name
-    user_input = update.message.text
-    chat_type = update.message.chat.type  # Get the type of chat
-    answering = False
+    try:
+        user_input = update.message.text
+        chat_type = update.message.chat.type  # Get the type of chat
+        message_time = update.message.date.timestamp()  # Get the message timestamp
+        answering = False
 
-    if update.message.reply_to_message and update.message.reply_to_message.from_user.id == context.bot.id:
-        answering = True
-    elif chat_type in ['group', 'supergroup']:
-        chance = 0.2
-        if random.random() < chance or name.lower() in user_input.lower():
-            answering = True
-    elif chat_type == 'private':
-        answering = True
+        # Only respond to messages sent after the bot was started
+        if message_time > bot_start_time:
+            if update.message.reply_to_message and update.message.reply_to_message.from_user.id == context.bot.id:
+                answering = True
+            elif chat_type in ['group', 'supergroup']:
+                chance = 0.2
+                if random.random() < chance or name.lower() in user_input.lower():
+                    answering = True
+            elif chat_type == 'private':
+                answering = True
 
-    if answering:
-        response = get_response(user_input)
-        print(f"{update.message.from_user.full_name}: {user_input}")
-        print(f"Bot Response: {response}\n")
-        update.message.reply_text(response)
-    else:
-        print("ignoring")
+            if answering:
+                response = get_response(user_input)
+                print(f"{update.message.from_user.full_name}: {user_input}")
+                print(f"Bot Response: {response}\n")
+                update.message.reply_text(response)
+            else:
+                print("Ignoring message.")
+        else:
+            print("Ignoring old message.")
+    except Exception as ex:
+        print(Fore.RED + f"FATAL ERROR: {str(ex)}")
+        input("\n\nPress ENTER to exit...")
+
 
 name = ''
+bot_start_time = time.time()
 
 # Main function to start the bot
 def main():
     global name
-    filename = bot_folders[number] + "/token.txt"
-    TOKEN = ''
+    try:
+        filename = bot_folders[number] + "/token.txt"
+        TOKEN = ''
 
-    if os.path.isfile(filename):
-        with open(filename, 'r') as file:
-            TOKEN = file.read().strip()
-    else:
-        TOKEN = input("Enter your Bot token from BotFather: ")
-        with open(filename, 'w') as file:
-            file.write(TOKEN)
-        print(f"Token saved to {filename}")
+        if os.path.isfile(filename):
+            with open(filename, 'r') as file:
+                TOKEN = file.read().strip()
+        else:
+            TOKEN = input("Enter your Bot token from BotFather: ")
+            with open(filename, 'w') as file:
+                file.write(TOKEN)
+            print(f"Token saved to {filename}")
 
-    filename = bot_folders[number] + "/name.txt"
+        filename = bot_folders[number] + "/name.txt"
 
-    if os.path.isfile(filename):
-        with open(filename, 'r') as file:
-            name = file.read().strip()
-    else:
-        name = input("Enter your Bot's name: ")
-        with open(filename, 'w') as file:
-            file.write(name)
-        print(f"Name saved to {filename}")
+        if os.path.isfile(filename):
+            with open(filename, 'r') as file:
+                name = file.read().strip()
+        else:
+            name = input("Enter your Bot's name: ")
+            with open(filename, 'w') as file:
+                file.write(name)
+            print(f"Name saved to {filename}")
 
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
+        updater = Updater(TOKEN, use_context=True)
+        dp = updater.dispatcher
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+        dp.add_handler(CommandHandler("start", start))
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-    print("The bot is running.")
-    updater.start_polling()
-    updater.idle()
+        print("The bot is running.")
+        updater.start_polling()
+        updater.idle()
+    except Exception as ex:
+        print(Fore.RED + f"FATAL ERROR: {str(ex)}")
+        input("\n\nPress ENTER to exit...")
 
 if __name__ == '__main__':
     main()
