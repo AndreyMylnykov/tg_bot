@@ -2,8 +2,8 @@
 
 This project provides a way to create and launch a Telegram chatbot using historical chat data. It involves two main scripts:
 
-- createBot.py - Prepares data and embeddings needed for the bot.
-- launchBot.py - Launches the bot using the prepared data.
+- **createBot.py** - Prepares data and embeddings needed for the bot.
+- **launchBot.py** - Launches the bot using the prepared data.
 
 # Overview
 
