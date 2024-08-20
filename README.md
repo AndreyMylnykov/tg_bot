@@ -5,7 +5,7 @@ This project provides a way to create and launch a Telegram chatbot using histor
 - createBot.py - Prepares data and embeddings needed for the bot.
 - launchBot.py - Launches the bot using the prepared data.
 
-## Overview
+# Overview
 
 ## createBot.py
 
