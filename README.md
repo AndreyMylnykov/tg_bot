@@ -36,7 +36,8 @@ Follow the prompts to:
 - Choose a name for the bot.
 - Select the JSON file containing chat history.
 - Provide a token from BotFather on Telegram.
-Files created:
+
+### Files created:
 
 - processed_chat.json - Contains processed chat data.
 - precomputed_embeddings.npy - Contains precomputed sentence embeddings.
