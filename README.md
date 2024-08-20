@@ -54,6 +54,10 @@ This script launches the chatbot using the precomputed data and the bot token.
 - Integrates with Telegram using python-telegram-bot library.
 - Responds to messages based on the precomputed embeddings.
 
+# Screenshots
+![image](https://github.com/user-attachments/assets/07623c99-9e9e-4ed4-8e50-8d19cb83d559)
+
+
 # Usage:
 ### Prepare your environment:
 
